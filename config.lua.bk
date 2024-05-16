@@ -1,0 +1,960 @@
+-- ==================================================MY LUNAR VIM CONFIG FILE=================================================================
+
+
+-- =================================================vim option settings=======================================================
+-- 设置 vim 的剪切板与系统公用
+vim.opt.clipboard = "unnamedplus"
+
+--=================================================luvar_vim general settings==============================================================
+-- 日志等级
+lvim.log.level    = "error"
+
+
+-- lvim.log.level = "trace"
+-- vim.lsp.set_log_level("trace")
+
+-- 不可见字符的显示，这里只把空格显示为一个点
+vim.o.list                                              = false
+vim.o.listchars                                         = "space:·"
+
+vim.o.hidden                                            = true
+
+-- -- 进入 buffer 时，如果缺失了 parser,则自动下载
+lvim.builtin.treesitter.auto_install                    = true
+
+-- --
+lvim.lsp.installer.setup.automatic_servers_installation = true
+
+
+-- -- 主题设置
+lvim.colorscheme                                    = "onedarker"
+lvim.builtin.dap.active                             = true
+
+-- -- 恢复上次会话
+vim.opt.sessionoptions                              = 'buffers,curdir,tabpages,winsize'
+
+-- -- tab 的空格数
+vim.opt.tabstop                                     = 4
+vim.opt.shiftwidth                                  = 4
+
+-- -- 自动安装 lsp
+lvim.lsp.installer.setup.automatic_installation     = true
+
+-- -- TODO: 不知道啥东西设置
+lvim.builtin.alpha.active                           = true
+lvim.builtin.alpha.mode                             = "dashboard"
+lvim.builtin.terminal.active                        = true
+lvim.builtin.nvimtree.setup.view.side               = "left"
+lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
+lvim.builtin.treesitter.highlight.enabled           = true
+lvim.builtin.treesitter.ensure_installed            = {
+    "bash",
+    "c",
+    "javascript",
+    "json",
+    "lua",
+    "python",
+    "typescript",
+    "tsx",
+    "css",
+    "rust",
+    "java",
+    "yaml",
+    "go",
+    "cpp",
+    "vue",
+}
+
+-- lvim.builtin.breadcrumbs.active                     = false
+
+--==========================================luvar_vim format settings===============================================================
+-- 保存文件时格式化
+lvim.format_on_save.enabled                         = true
+lvim.format_on_save.pattern                         = { "*.lua", "*.py", "*.go", "*.c", "*.json", "*.sql", "*.js",
+    "*.css", "*.html", "*.vue" }
+
+
+-- 配置 cpp 格式化
+-- https://github.com/LunarVim/LunarVim/issues/2597#issuecomment-1122731886=
+vim.api.nvim_create_autocmd("FileType", { pattern = { "*.cpp" }, command = "setlocal ts=4 sw=4", })
+vim.api.nvim_create_autocmd("FileType", { pattern = { "*.c" }, command = "setlocal ts=4 sw=4", })
+
+
+-- --==========================================luvar_vim keybinding settings===============================================================
+-- leader 键
+lvim.leader = "space"
+
+local opt = {
+    noremap = true,
+    silent = true,
+}
+
+local map = vim.api.nvim_set_keymap
+
+-- 保存文件
+map("", "<C-s>", ":w<cr>", opt)
+map("", "<A-s>", ":w<cr>", opt)
+
+
+-- -- 行首行尾跳转
+-- map("", "<C-h>", "^", opt)
+-- map("", "<C-l>", "g_", opt)
+
+-- -- 移动左右 buffer
+map("n", "<S-l>", ":BufferLineCycleNext<CR>", opt)
+map("n", "<S-h>", ":BufferLineCyclePrev<CR>", opt)
+
+-- -- 关闭当前 buffer
+map("n", "c", ":bdelete<CR>", opt)
+-- map("n", "c", ":BufferKill<CR>", opt)
+
+-- -- 退出
+-- map("n", "q", "<leader>q", opt)
+-- map("n", "qq", ":q!<cr>", opt)
+
+-- -- 上下滚动浏览
+map("", "<C-j>", "5j", opt)
+map("", "<C-k>", "5k", opt)
+-- map("","<C-d>","9jzt",opt)
+-- map("","<C-u>","9kzt",opt)
+map("", "<C-d>", "<c-d>zz", opt)
+map("", "<C-u>", "<c-u>zz", opt)
+
+-- -- 设置 jj、jk 为 ESC,避免频繁按 esc
+-- map("i", "jj", "<esc>", opt)
+map("i", "jk", "<esc>", opt)
+
+-- map("t", "jj", "<esc>", opt)
+map("t", "jk", "<esc>", opt)
+
+-- -- 剪切板快捷键支持系统
+-- map("v", "y", '"+y', opt)
+-- map("v", "d", '"+d', opt)
+-- map("v", "p", '"+p', opt)
+
+-- -- 按 esc 消除上一次的高亮
+map("n", "<esc>", ":noh<cr>", opt)
+-- map("n", "<esc>", "~", opt)
+
+-- map("n", "<cmd>lua vim.lsp.buf.hover()<cr>", opt)
+
+-- -- 终端
+-- map("n", "t", ':execute  v:count . "ToggleTerm"<CR>', opt)
+-- map("n", "<leader>t", '<esc>:execute  v:count . "ToggleTerm"<CR>', opt)
+
+-- 跳转搜索，类似于 acejump
+-- map("", "f", ":HopPattern<CR>", opt)
+
+
+------------------------------------------------------------------
+--                          分屏
+------------------------------------------------------------------
+map("n", "s", "", opt) -- 取消 s 默认功能
+-- map("n", "S", "", opt)                          -- 取消 s 默认功能
+
+map('n', 'sv', ':vsp<CR>', opt)                 -- 水平分屏
+map('n', 'sh', ':sp<CR>', opt)                  -- 垂直分屏
+
+map('n', 'sc', '<C-w>c', opt)                   -- 关闭当前屏幕
+map('n', 'so', '<C-w>o', opt)                   -- 关闭其它屏幕
+
+map('n', 's,', ':vertical resize +20<CR>', opt) -- 向右移动屏幕
+map('n', 's.', ':vertical resize -20<CR>', opt) -- 向左移动屏幕
+
+map("n", "sk", ":resize +10<CR>", opt)          -- 向上移动屏幕
+map("n", "sj", ":resize -10<CR>", opt)          -- 向下移动屏幕
+
+map('n', 'sm', '<C-w>|', opt)                   -- 全屏
+map('n', 'sn', '<C-w>=', opt)                   -- 恢复全屏
+
+map("n", "<a-,>", "<C-w>h", opt)                -- 移动到左分屏
+map("n", "<a-.>", "<C-w>l", opt)                -- 移动到右分屏
+
+-- 取消撤销
+map('n', 'U', '<c-r>', opt)
+
+-- 查找文件
+map('n', 'f', '<Space>sf', {})
+
+-- 查找代码
+map('', 't', '<Space>st', {})
+
+-- 打开最近打开文件
+map('n', 'e', '<Space>sr', {})
+
+-- 参数提示
+map("n", "J", "<cmd>lua vim.lsp.buf.signature_help()<CR>", {})
+map("n", "gk", "<cmd>lua vim.lsp.buf.signature_help()<CR>", {})
+
+-- error 管理
+map("n", "<c-p>", "<esc><cmd>lua vim.diagnostic.goto_prev()<cr>", {}) -- pre error
+map("n", "<c-n>", "<esc><cmd>lua vim.diagnostic.goto_next()<cr>", {}) -- next error
+map("n", "<c-e>", "<cmd>Trouble<cr>", opt)                            -- show error
+
+-- 打断点
+-- map("n", "bb", "<cmd>lua require'dap'.toggle_breakpoint()<cr>", {})
+-- map("n", "bc", "<cmd>lua require'dap'.continue()<cr>", {})
+-- map("n", "bo", "<cmd>lua require'dap'.step_over()<cr>", {})
+-- map("n", "bi", "<cmd>lua require'dap'.step_into()<cr>", {})
+
+
+-- visual模式下缩进代码
+map("v", "<", "<gv", opt)
+map("v", ">", ">gv", opt)
+
+-- 上下移动选中文本
+-- map("v", "J", ":move '>+1<CR>gv-gv", opt)
+-- map("v", "K", ":move '<-2<CR>gv-gv", opt)
+
+-- map("", "h", "", opt)
+-- map("", "j", "", opt)
+-- map("", "k", "", opt)
+-- map("", "l", "", opt)
+
+lvim.keys.insert_mode["<A-j>"] = false
+lvim.keys.insert_mode["<A-k>"] = false
+lvim.keys.normal_mode["<A-j>"] = false
+lvim.keys.normal_mode["<A-k>"] = false
+lvim.keys.visual_block_mode["<A-j>"] = false
+lvim.keys.visual_block_mode["<A-k>"] = false
+lvim.keys.visual_block_mode["J"] = false
+lvim.keys.visual_block_mode["K"] = false
+
+-- 折叠选中代码
+map("v", "zf", "zf", opt)
+-- 折叠切换
+map("n", "za", "za", opt)
+
+-- 重命名
+-- map("n", "<leader>r", "<cmd>lua vim.lsp.buf.rename()<CR>", opt)
+
+
+vim.api.nvim_set_keymap('n', '<leader>im', [[<cmd>lua require'telescope'.extensions.goimpl.goimpl{}<CR>]],
+    { noremap = true, silent = true })
+
+
+-- 窗口切换
+map("n", "<left>", "<c-w>h", opt)
+map("n", "<right>", "<c-w>l", opt)
+map("n", "<up>", "<c-w>k", opt)
+map("n", "<down>", "<c-w>j", opt)
+map("", "<c-h>", "<c-w>h", opt)
+map("", "<c-l>", "<c-w>l", opt)
+
+-- preview tree
+map("", "S", "<Cmd>SymbolsOutline<cr>", opt)
+
+
+map("", "gn", "<Cmd>GoGenReturn<cr>", opt)
+map("", "gt", "<Cmd>GoFillStruct<cr>", opt)
+
+
+-- 删除一些不用功能
+lvim.builtin.which_key.mappings['w'] = {}
+lvim.builtin.which_key.mappings['T'] = {}
+lvim.builtin.which_key.mappings['D'] = {}
+lvim.builtin.which_key.mappings['h'] = {}
+lvim.builtin.which_key.mappings['m'] = {}
+lvim.builtin.which_key.mappings['b'] = {}
+
+
+-- 终端
+map("n", "T", '<cmd>execute  v:count . "ToggleTerm"<CR>', opt)
+lvim.builtin.which_key.mappings['t'] = {
+    '<cmd>execute  v:count . "ToggleTerm"<CR>', 'term',
+}
+
+-- 快速跳转
+vim.keymap.set('n', 'F', function()
+    local current_window = vim.fn.win_getid()
+    require('leap').leap { target_windows = { current_window } }
+end)
+
+map("n", "<TAB>", "%", opt)
+
+
+map("n", "gd", '<cmd>Telescope lsp_definitions<cr>', opt)
+map("n", "gr", '<cmd>Telescope lsp_references<cr>', opt)
+map("n", "K", '<cmd>lua vim.lsp.buf.hover()<cr>', opt)
+
+
+-- lvim.lsp.buffer_mappings.normal_mode["gd"] = { "<cmd>Telescope lsp_definitions<cr>", "Go to Definiton" }
+-- lvim.lsp.buffer_mappings.normal_mode["gr"] = { "<cmd>Telescope lsp_references<cr>", "Go to  References" }
+-- lvim.lsp.buffer_mappings.normal_mode["K"] = { "<cmd>lua vim.lsp.buf.hover()<cr>", "Show hover" }
+-- lvim.lsp.buffer_mappings.normal_mode["gi"] = { "<cmd>lua vim.lsp.buf.implementation()<cr>", "Goto Implementation" }
+-- lvim.lsp.buffer_mappings.normal_mode["gs"] = { "<cmd>lua vim.lsp.buf.signature_help()<cr>", "show signature help" }
+-- lvim.lsp.buffer_mappings.normal_mode["gl"] = {
+--     function()
+--         local float = vim.diagnostic.config().float
+
+--         if float then
+--             local config = type(float) == "table" and float or {}
+--             config.scope = "line"
+
+--             vim.diagnostic.open_float(config)
+--         end
+--     end,
+--     "Show line diagnostics",
+-- }
+
+-- vim.api.nvim_set_keymap('n', 'j', '<Plug>(accelerated_jk_gj)', {})
+-- vim.api.nvim_set_keymap('n', 'k', '<Plug>(accelerated_jk_gk)', {})
+
+-- vim.api.nvim_create_autocmd({ "BufRead" }, { command = ":delm a-zA-Z0-9", })
+
+-- local api = require "nvim-tree.api"
+-- vim.keymap.set("n,", "", api.fs.rename_basename(), {})
+
+local cmd = vim.cmd
+
+cmd("nnoremap ; :")
+cmd("nnoremap : ;")
+
+cmd("nnoremap <Enter> o<ESC>") -- Insert New Line quickly
+
+
+cmd("nnoremap # *")
+cmd("nnoremap * #")
+
+-- p, d 不覆盖无名寄存器
+-- cmd("xnoremap p pgvy")
+cmd("xnoremap p P")
+-- cmd('nnoremap d "_d')
+-- cmd('vnoremap d "_d')
+
+
+-- --=================================================vim plugins install=======================================================
+lvim.plugins = {
+    -- 显示图片
+    -- { 'edluffy/hologram.nvim' },
+    { 'chrisbra/NrrwRgn' },
+    -- Neovim 的无干扰编码
+    {
+        "folke/zen-mode.nvim",
+        opts = {
+            -- your configuration comes here
+            -- or leave it empty to use the default settings
+            -- refer to the configuration section below
+        }
+    },
+
+    -- Twilight 是 Neovim 0.5 的 Lua 插件，它可以使您使用 TreeSitter 编辑的代码的非活动部分变暗。
+    {
+        "folke/twilight.nvim",
+        opts = {
+            -- your configuration comes here
+            -- or leave it empty to use the default settings
+            -- refer to the configuration section below
+        }
+    },
+    { 'p00f/clangd_extensions.nvim' },
+    -- 进入 normal 模式自动切换英文
+    {
+        "keaising/im-select.nvim",
+        config = function()
+            require("im_select").setup({})
+        end,
+    },
+    --
+    {
+        "kylechui/nvim-surround",
+        version = "*", -- Use for stability; omit to use `main` branch for the latest features
+        event = "VeryLazy",
+        config = function()
+            require("nvim-surround").setup({
+                -- Configuration here, or leave empty to use defaults
+            })
+        end
+    },
+    -- 长按j k 加速
+    -- { 'rainbowhxch/accelerated-jk.nvim' },
+    {
+        "roobert/tailwindcss-colorizer-cmp.nvim",
+        -- optionally, override the default options:
+        config = function()
+            require("tailwindcss-colorizer-cmp").setup({
+                color_square_width = 2,
+            })
+        end
+    },
+
+    -- 预览 markdown
+    { "ellisonleao/glow.nvim",     config = function() require("glow").setup() end },
+    {
+        "iamcco/markdown-preview.nvim",
+        build = "cd app && npm install",
+        init = function()
+            vim.g.mkdp_filetypes = {
+                "markdown" }
+        end,
+        ft = {
+            "markdown" },
+    },
+    -- vim mark
+    { 'chentoast/marks.nvim' },
+    -- 中文排版自动规范化的 Vim 插件
+    { 'hotoo/pangu.vim' },
+    -- fzf 搜索
+    -- 第一个别删
+    { 'junegunn/fzf', },
+    { 'junegunn/fzf.vim' },
+    -- 异步任务
+    { 'skywind3000/asynctasks.vim' },
+    { 'skywind3000/asyncrun.vim' },
+    -- 计算器
+    -- {
+    --     'hrsh7th/cmp-calc',
+    --     config = function()
+    --         require 'cmp'.setup {
+    --             sources = {
+    --                 { name = 'calc' },
+    --             },
+    --         }
+    --     end
+    -- },
+
+    -- jce 高亮
+    { "edte/jce-highlight" },
+
+    -- 漂亮的诊断、参考、望远镜结果、快速修复和位置列表可帮助您解决代码引起的所有问题。
+    -- Trouble comes with the following commands:
+    -- Trouble [mode]: open the list
+    -- TroubleClose [mode]: close the list
+    -- TroubleToggle [mode]: toggle the list
+    -- TroubleRefresh: manually refresh the active list
+    {
+        "folke/trouble.nvim",
+        dependencies = "nvim-tree/nvim-web-devicons",
+        config = function()
+            require("trouble").setup {
+                -- jump to the next item, skipping the groups
+                require("trouble").next({ skip_groups = true, jump = true }),
+
+                -- jump to the previous item, skipping the groups
+                require("trouble").previous({ skip_groups = true, jump = true }),
+                -- your configuration comes here
+                -- or leave it empty to use the default settings
+                -- refer to the configuration section below
+            }
+        end
+    },
+    ---智能地重新打开您上次编辑位置的文件
+    {
+        "ethanholz/nvim-lastplace",
+        event = "bufread",
+        config = function()
+            require("nvim-lastplace").setup({
+                lastplace_ignore_buftype = { "quickfix", "nofile", "help" },
+                lastplace_ignore_filetype = {
+                    "gitcommit", "gitrebase", "svn", "hgcommit",
+                },
+                lastplace_open_folds = true,
+            })
+        end,
+    },
+    -- 键入时出现 LSP 签名提示
+    {
+        "ray-x/lsp_signature.nvim",
+        event = "bufread",
+        config = function() require "lsp_signature".on_attach() end,
+    },
+    -- 将当前工作目录更改为项目的根目录。
+    {
+        "ahmedkhalf/lsp-rooter.nvim",
+        event = "bufread",
+        config = function()
+            require("lsp-rooter").setup()
+        end,
+    },
+    -- 单选项卡界面可轻松循环浏览任何 git rev 的所有修改文件的差异。
+    {
+        "sindrets/diffview.nvim",
+        event = "bufread",
+    },
+
+    -- 提供 project 支持
+    {
+        "nvim-telescope/telescope-project.nvim",
+    },
+
+    -- 一个非常棒的 Git 包装器，它应该是非法的
+    {
+        "tpope/vim-fugitive",
+    },
+
+    -- 一个 neovim 插件，用于运行代码行 / 块（独立于文件的其余部分），支持多种语言
+    {
+        'michaelb/sniprun',
+        build = "bash ./install.sh v1.2.6",
+    },
+
+    -- go 插件
+    {
+        'ray-x/go.nvim',
+    },
+
+
+    -- vim/nvim 的片段插件，支持 LSP/VSCode 的片段格式。
+    { 'hrsh7th/vim-vsnip', },
+
+
+    -- 成对插入或删除括号、括号、引号
+    {
+        'jiangmiao/auto-pairs',
+    },
+
+    -- dap 插件
+    {
+        "rcarriga/nvim-dap-ui",
+        dependencies = { "mfussenegger/nvim-dap" }
+    },
+    { 'thehamsta/nvim-dap-virtual-text', },
+
+    -- go 接口插件
+    {
+        'edolphin-ydf/goimpl.nvim',
+        dependencies = {
+            { 'nvim-lua/plenary.nvim' },
+            { 'nvim-lua/popup.nvim' },
+            { 'nvim-telescope/telescope.nvim' },
+            { 'nvim-treesitter/nvim-treesitter' },
+        },
+        config = function()
+            require 'telescope'.load_extension 'goimpl'
+        end,
+    },
+
+    -- 用于处理 CMake 项目的 Vim/Neovim 插件
+    { 'cdelledonne/vim-cmake', },
+
+    -- wilder.nvim 插件，用于命令行补全，和 noice.nvim 冲突
+    {
+        "gelguy/wilder.nvim",
+        event = 'CmdlineEnter', -- 懒加载：首次进入cmdline时载入
+        config = function()
+            local wilder = require('wilder')
+            wilder.setup({
+                modes = { ':', '/', '?' },
+                next_key = 0,
+                previous_key = 0,
+                reject_key = 0,
+                accept_key = 0
+            })
+            vim.api.nvim_command("silent! UpdateRemotePlugins") -- 需要载入一次py依赖 不然模糊过滤等失效
+            -- 设置source
+            wilder.set_option('pipeline', {
+                wilder.branch(
+                -- 当默认无输入时 展示15条历史记录
+                    {
+                        wilder.check(function(_, x) return vim.fn.empty(x) end),
+                        wilder.history(5)
+                    },
+                    -- 当输入时 展示所有匹配项(模糊匹配)
+                    wilder.cmdline_pipeline({
+                        fuzzy = 1,
+                        fuzzy_filter = wilder.vim_fuzzy_filter()
+                    }),
+                    -- pipeline for search
+                    wilder.search_pipeline()
+                ),
+            })
+            -- 设置样式
+            wilder.set_option('renderer', wilder.popupmenu_renderer(
+                wilder.popupmenu_border_theme({
+                    -- 设置特定高亮
+                    highlights = {
+                        accent = "WilderAccent",
+                        selected_accent = "WilderSelectedAccent",
+                    },
+                    highlighter = wilder.basic_highlighter(),
+                    left = { ' ', wilder.popupmenu_devicons() },   -- 左侧加入icon
+                    right = { ' ', wilder.popupmenu_scrollbar() }, -- 右侧加入滚动条
+                    border = 'rounded',
+                    max_height = 17,                               -- 最大高度限制 因为要计算上下 所以17支持最多15个选项
+                    pumblend = 0,
+                })
+            ))
+            -- 设置高亮
+            vim.api.nvim_set_hl(0, 'WilderAccent', { fg = '#FF4500' })
+            vim.api.nvim_set_hl(0, 'WilderSelectedAccent', { fg = '#FF4500', bg = '#4e4e4e' })
+            -- 设置快捷键
+            map('c', '<tab>', [[wilder#in_context() ? wilder#next() : '<tab>']],
+                { noremap = true, expr = true })
+            map('c', '<Down>', [[wilder#in_context() ? wilder#next() : '<down>']],
+                { noremap = true, expr = true })
+            map('c', '<up>', [[wilder#in_context() ? wilder#previous() : '<up>']],
+                { noremap = true, expr = true })
+            map('c', '0', '0', {}) -- 不清楚原因导致0无法使用 强制覆盖
+        end
+    },
+    { 'nixprime/cpsm' },
+    { 'romgrk/fzy-lua-native' },
+
+    -- 使用“.”启用重复支持的插件映射
+    {
+        'tpope/vim-repeat'
+    },
+
+    -- {
+    --     'sakhnik/nvim-gdb',
+    -- },
+
+    -- 显示代码上下文,包含函数签名
+    {
+        'nvim-treesitter/nvim-treesitter-context',
+    },
+    -- 快速跳转
+    {
+        "ggandor/leap.nvim",
+        config = function() require("leap").set_default_keymaps() end
+    },
+    -- 符号树状视图
+    {
+        'simrat39/symbols-outline.nvim',
+    },
+    -- 语法感知文本对象、选择、移动、交换和查看支持。
+    {
+        "nvim-treesitter/nvim-treesitter-textobjects",
+        after = "nvim-treesitter",
+        dependencies = "nvim-treesitter/nvim-treesitter",
+    },
+    { 'git@github.com:nacro90/numb.nvim.git' },
+}
+
+-- -- =================================================vim plugins settings=======================================================
+
+-- require 'hop'.setup()
+
+require('go').setup()
+
+
+require("symbols-outline").setup()
+
+-- toggle terminal 设置
+function _G.set_terminal_keymaps()
+    local opts = { noremap = true }
+    vim.api.nvim_buf_set_keymap(0, 't', 'jk', [[<C-\><C-n>]], opts)                              -- 切换 normal 模式
+    vim.api.nvim_buf_set_keymap(0, "t", "jx", "jk<cmd>q<CR>", { noremap = true, silent = true }) -- 关闭
+    -- vim.api.nvim_buf_set_keymap(0, "t", "<A-8>", '<esc><cmd>execute  v:count . "ToggleTerm"<CR>', {}) -- 切换终端
+end
+
+vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+
+-- telescope
+require 'telescope'.load_extension('project')
+
+
+-- nvim-tree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+vim.opt.termguicolors = true
+
+-- 配置 dap 调试
+-- local dap = require("dap")
+-- dap.adapters.cppdbg = {
+--     id = "cppdbg",
+--     type = 'executable',
+--     command = "/home/edte/.local/share/nvim/mason/bin/OpenDebugAD7",
+-- }
+
+-- dap.configurations.cpp = {
+--     {
+--         name = "Launch file",
+--         type = "cppdbg",
+--         request = "launch",
+--         program = function()
+--             return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+--         end,
+--         -- args = function()
+--         --     local input = vim.fn.input("Input args: ")
+--         -- end,
+--         cwd = '${workspaceFolder}',
+--         stopOnEntry = true,
+--         setupCommands = {
+--             {
+--                 description = 'enable pretty printing',
+--                 text = '-enable-pretty-printing',
+--                 ignoreFailures = false
+--             },
+--         },
+--     }
+-- }
+
+
+-- dap.configurations.c = dap.configurations.cpp
+
+-- require("nvim-dap-virtual-text").setup {
+--     enabled = true,                     -- enable this plugin (the default)
+--     enabled_commands = true,            -- create commands DapVirtualTextEnable, DapVirtualTextDisable, DapVirtualTextToggle, (DapVirtualTextForceRefresh for refreshing when debug adapter did not notify its termination)
+--     highlight_changed_variables = true, -- highlight changed values with NvimDapVirtualTextChanged, else always NvimDapVirtualText
+--     highlight_new_as_changed = true,    -- highlight new variables in the same way as changed variables (if highlight_changed_variables)
+--     show_stop_reason = true,            -- show stop reason when stopped for exceptions
+--     commented = false,                  -- prefix virtual text with comment string
+--     -- experimental features:
+--     virt_text_pos = 'eol',              -- position of virtual text, see `:h nvim_buf_set_extmark()`
+--     all_frames = false,                 -- show virtual text for all stack frames not only current. Only works for debugpy on my machine.
+--     virt_lines = false,                 -- show virtual lines instead of virtual text (will flicker!)
+--     virt_text_win_col = nil             -- position the virtual text at a fixed window column (starting from the first text column) ,
+--     -- e.g. 80 to position at column 80, see `:h nvim_buf_set_extmark()`
+-- }
+
+
+require 'marks'.setup {
+    -- whether to map keybinds or not. default true
+    default_mappings = true,
+    -- which builtin marks to show. default {}
+    builtin_marks = { ".", "<", ">", "^" },
+    -- whether movements cycle back to the beginning/end of buffer. default true
+    cyclic = true,
+    -- whether the shada file is updated after modifying uppercase marks. default false
+    force_write_shada = false,
+    -- how often (in ms) to redraw signs/recompute mark positions.
+    -- higher values will have better performance but may cause visual lag,
+    -- while lower values may cause performance penalties. default 150.
+    refresh_interval = 250,
+    -- sign priorities for each type of mark - builtin marks, uppercase marks, lowercase
+    -- marks, and bookmarks.
+    -- can be either a table with all/none of the keys, or a single number, in which case
+    -- the priority applies to all marks.
+    -- default 10.
+    sign_priority = { lower = 10, upper = 15, builtin = 8, bookmark = 20 },
+    -- disables mark tracking for specific filetypes. default {}
+    excluded_filetypes = {},
+    -- marks.nvim allows you to configure up to 10 bookmark groups, each with its own
+    -- sign/virttext. Bookmarks can be used to group together positions and quickly move
+    -- across multiple buffers. default sign is '!@#$%^&*()' (from 0 to 9), and
+    -- default virt_text is "".
+    bookmark_0 = {
+        sign = "⚑",
+        virt_text = "hello world",
+        -- explicitly prompt for a virtual line annotation when setting a bookmark from this group.
+        -- defaults to false.
+        annotate = false,
+    },
+    mappings = {}
+}
+
+
+require 'marks'.setup {
+    mappings = {
+        set_next = "mm",
+        delete_line = "md",
+        delete_buf = "mD",
+        next = "m,",
+        prev = "m.",
+        preview = "m:",
+    }
+}
+
+require('glow').setup({
+    glow_path = "/Users/edte/.local/bin/glow",
+})
+
+
+
+require 'treesitter-context'.setup {
+    enable = true,           -- Enable this plugin (Can be enabled/disabled later via commands)
+    max_lines = 1,           -- How many lines the window should span. Values <= 0 mean no limit.
+    min_window_height = 1,   -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+    line_numbers = true,
+    multiline_threshold = 1, -- Maximum number of lines to show for a single context
+    trim_scope = 'outer',    -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+    mode = 'cursor',         -- Line used to calculate context. Choices: 'cursor', 'topline'
+    -- Separator between context and content. Should be a single character string, like '-'.
+    -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+    separator = nil,
+    zindex = 1,      -- The Z-index of the context window
+    on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+}
+
+require 'nvim-treesitter.configs'.setup {
+    textobjects = {
+        move = {
+            enable = true,
+            set_jumps = true,
+            goto_previous_start = {
+                ["gf"] = { query = { "@function.outer" } },
+            },
+        },
+    },
+}
+
+-- require('numb').setup()
+
+
+-- -- require('hologram').setup {
+-- --     auto_display = true -- WIP automatic markdown image display, may be prone to breaking
+-- -- }
+
+-- --
+-- -- lvim.builtin.cmp.formatting                         = {
+-- --     format = require("tailwindcss-colorizer-cmp").formatter
+-- -- }
+
+
+---------------------------------------------------lsp------------------------------------------------------------------------------------
+require 'lspconfig'.volar.setup {
+    filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' }
+}
+
+
+local opts = {
+    settings = {
+        Volar = { hint = { enable = false } },
+    },
+}
+require("lvim.lsp.manager").setup("volar", opts)
+
+require("lspconfig").gopls.setup({
+    settings = {
+        gopls = {
+            analyses = {
+                unusedparams = true,
+            },
+            staticcheck = true,
+            gofumpt = true,
+        },
+    },
+})
+
+require('lspconfig').lua_ls.setup {
+    filetypes = { 'lua' },
+}
+require("lspconfig").cssls.setup({})
+require("lspconfig").tailwindcss.setup({})
+require("lspconfig").jsonls.setup({})
+require("lspconfig").tsserver.setup({})
+require("lspconfig").bashls.setup({
+    filetypes = { 'sh' },
+    -- root_dir = nvim_lsp.util.root_pattern('.git'),
+    -- root_dir = ".",
+})
+
+-- require("lspconfig").grammarly-languageserver.setup({})
+-- require("lspconfig").ltex-ls.setup({})
+require("lspconfig").emmet_ls.setup({})
+require("lspconfig").marksman.setup({})
+require("lspconfig").emmet_language_server.setup({})
+
+
+-- 根目录下保存文件为 .clang-format
+-- BasedOnStyle: LLVM
+-- IndentWidth: 4
+-- ColumnLimit: 120
+
+local clangd_flags = {
+
+    -- 默认格式化风格: 谷歌开源项目代码指南
+    "--fallback-style=google",
+
+    -- 建议风格：打包(重载函数只会给出一个建议）
+    -- 相反可以设置为detailed
+    "--completion-style=bundled",
+
+    "--completion-style=detailed",
+    "--header-insertion-decorators",
+    "--enable-config",
+    "--offset-encoding=utf-8",
+    "--ranking-model=heuristics",
+    -- 跨文件重命名变量
+    "--cross-file-rename",
+    -- 设置verbose时，会把编译命令和索引构建结果，占用内存等信息都打印出来，需要检查索引构建失败原因时，可以设置为verbose
+    "--log=error",
+    -- 输出的 JSON 文件更美观
+    "--pretty",
+    -- 输入建议中，已包含头文件的项与还未包含头文件的项会以圆点加以区分
+    "--header-insertion-decorators",
+    "--folding-ranges",
+    -- 在后台自动分析文件（基于complie_commands)
+    "--background-index",
+    -- 标记compelie_commands.json文件的目录位置
+    "--compile-commands-dir=.",
+    -- 告诉clangd用那个clang进行编译，路径参考which clang++的路径
+    "--query-driver=/usr/bin/clang++",
+    -- 启用 Clang-Tidy 以提供「静态检查」
+    "--clang-tidy",
+    -- Clang-Tidy 静态检查的参数，指出按照哪些规则进行静态检查，详情见「与按照官方文档配置好的 VSCode 相比拥有的优势」
+    -- 参数后部分的*表示通配符
+    -- 在参数前加入-，如-modernize-use-trailing-return-type，将会禁用某一规则
+    "--clang-tidy-checks=cppcoreguidelines-*,performance-*,bugprone-*,portability-*,modernize-*,google-*",
+    -- 默认格式化风格: 谷歌开源项目代码指南
+    -- "--fallback-style=file",
+    -- 同时开启的任务数量
+    "-j=3",
+    -- 全局补全（会自动补充头文件）
+    "--all-scopes-completion",
+    -- 更详细的补全内容
+    "--completion-style=detailed",
+    -- 补充头文件的形式
+    "--header-insertion=iwyu",
+    -- pch优化的位置(memory 或 disk，选择memory会增加内存开销，但会提升性能) 推荐在板子上使用disk
+    "--pch-storage=memory",
+
+    -- 启用这项时，补全函数时，将会给参数提供占位符，键入后按 Tab 可以切换到下一占位符，乃至函数末
+    "--function-arg-placeholders=true",
+}
+
+require("lspconfig").clangd.setup({
+    cmd = { "clangd", unpack(clangd_flags) },
+    -- root_dir = function(fname)
+    --     return vim.fn.getcwd()
+    -- end
+})
+
+
+
+-----------------------------------------------------------------------dashboard--------------------------------------------------------------------------------
+local dashboard = require "alpha.themes.dashboard"
+local user_config_path = require("lvim.config"):get_user_config_path()
+
+local header = {
+    type = "text",
+    val = {
+        [[          ▀████▀▄▄              ▄█ ]],
+        [[            █▀    ▀▀▄▄▄▄▄    ▄▄▀▀█ ]],
+        [[    ▄        █          ▀▀▀▀▄  ▄▀  ]],
+        [[   ▄▀ ▀▄      ▀▄              ▀▄▀  ]],
+        [[  ▄▀    █     █▀   ▄█▀▄      ▄█    ]],
+        [[  ▀▄     ▀▄  █     ▀██▀     ██▄█   ]],
+        [[   ▀▄    ▄▀ █   ▄██▄   ▄  ▄  ▀▀ █  ]],
+        [[    █  ▄▀  █    ▀██▀    ▀▀ ▀▀  ▄▀  ]],
+        [[   █   █  █      ▄▄           ▄▀   ]],
+    },
+    opts = {
+        position = "center",
+        hl = "Type",
+    },
+}
+
+local buttons = {
+    type = "group",
+    val = {
+        dashboard.button("f", "Find File ", "<cmd>Telescope find_files<CR>"),
+        dashboard.button("n", "New File ", "<cmd>ene!<CR>"),
+        dashboard.button("p", "Recent Projects ", "<cmd>Telescope projects<CR>"),
+        dashboard.button("e", "Recently Used Files", "<cmd>Telescope oldfiles<CR>"),
+        dashboard.button("t", "Find Word", "<cmd>Telescope live_grep<CR>"),
+        dashboard.button("c", "Configuration", "<cmd>edit " .. user_config_path .. "<CR>"),
+        dashboard.button("q", "Quit", "<CMD>quit<CR>" .. user_config_path .. "<CR>"),
+    },
+    position = "center",
+    opts = {
+        spacing = 1,
+        hl_shortcut = "Include",
+    },
+}
+
+lvim.builtin.alpha.dashboard.config = {
+    layout = {
+        { type = "padding", val = 2 },
+        header,
+        { type = "padding", val = 3 },
+        buttons,
+    },
+    opts = {
+        margin = 7,
+        setup = function()
+            vim.cmd [[autocmd alpha_temp DirChanged * lua require('alpha').redraw()]]
+        end,
+    },
+}

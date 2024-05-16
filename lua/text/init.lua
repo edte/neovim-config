@@ -1,0 +1,8 @@
+require("text.jump")
+require("text.search")
+require("text.diff")
+require("text.fold")
+require("text.color")
+require("text.number")
+require("text.input")
+require("text.move")

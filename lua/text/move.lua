@@ -1,0 +1,21 @@
+-- try_require('move').setup({
+--     line = {
+--         enable = true, -- Enables line movement
+--         indent = true  -- Toggles indentation
+--     },
+--     block = {
+--         enable = true, -- Enables block movement
+--         indent = true  -- Toggles indentation
+--     },
+--     word = {
+--         enable = true, -- Enables word movement
+--     },
+--     char = {
+--         enable = false -- Enables char movement
+--     }
+-- })
+
+-- keymap('v', '<S-j>', ':MoveBlock(1)<CR>')
+-- keymap('v', '<S-k>', ':MoveBlock(-1)<CR>')
+-- keymap('v', '<S-h>', ':MoveHBlock(-1)<CR>')
+-- keymap('v', '<S-l>', ':MoveHBlock(1)<CR>')

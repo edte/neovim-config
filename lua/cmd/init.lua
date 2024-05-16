@@ -1,0 +1,2 @@
+-- 不能直接 try_require  cmd,不然 高亮不生效
+-- try_try_require("cmd.wilder")
