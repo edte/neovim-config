@@ -54,8 +54,8 @@ telescope.setup({
 -- keymap("n", "f", "<cmd>Telescope git_files<cr>")
 
 -- 查找代码
--- keymap('n', 't', '<Space>st')
-keymap("n", "t", "<cmd>Telescope live_grep<cr>")
+-- keymap("n", "t", "<Space>st")
+-- keymap("n", "t", "<cmd>Telescope live_grep<cr>")
 
 -- 打开最近打开文件
 keymap("n", "e", "<cmd>Telescope oldfiles<cr>")

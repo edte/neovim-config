@@ -26,6 +26,6 @@ lvim.builtin.which_key.mappings["t"] = {
 	"term",
 }
 
-keymap("n", "T", '<cmd>execute  v:count . "ToggleTerm"<CR>')
+-- keymap("n", "t", '<cmd>execute  v:count . "ToggleTerm"<CR>')
 
-keymap("t", "jk", "<esc>")
+-- keymap("t", "jk", "<esc>")

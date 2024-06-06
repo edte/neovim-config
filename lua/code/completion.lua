@@ -10,11 +10,19 @@ end
 cmp.setup({
 	preselect = cmp.PreselectMode.Item,
 	completion = { completeopt = "menu,menuone,select" },
+
 	sources = {
 		{
 			name = "cmp_tabnine",
 			priority = 8,
 		},
+
+		-- {
+		-- 	name = "copilot",
+		-- 	group_index = 2,
+		-- 	priority = 8,
+		-- },
+
 		-- {
 		--     name = 'cmp_ai',
 		--     priority = 8
@@ -133,6 +141,7 @@ cmp.setup({
 			compare.locality,
 			compare.recently_used,
 			compare.score, -- based on :  score = score + ((#sources - (source_index - 1)) * sorting.priority_weight)
+			-- try_require("copilot_cmp.comparators").prioritize,
 			try_require("cmp_tabnine.compare"),
 			compare.offset,
 			compare.order,

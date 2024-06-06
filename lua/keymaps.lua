@@ -58,8 +58,8 @@ keymap("n", "gr", "<cmd>Telescope lsp_references<cr>")
 
 -- 交换 : ;
 
-cmd("nnoremap ; :")
-cmd("nnoremap : ;")
+-- cmd("nnoremap ; :")
+-- cmd("nnoremap : ;")
 
 cmd("inoremap ; :")
 cmd("inoremap : ;")
@@ -71,6 +71,7 @@ cmd("inoremap : ;")
 -- cmd("vnoremap : ;")
 
 cmd("nnoremap <Enter> o<ESC>") -- Insert New Line quickly
+-- cmd("nnoremap <Enter> %")
 
 cmd("xnoremap p P")
 
@@ -106,3 +107,5 @@ create_cmd("BufferDelete", function()
 	local force = not vim.bo.buflisted or vim.bo.buftype == "nofile"
 	vim.cmd(force and "bd!" or string.format("bp | bd! %s", vim.api.nvim_get_current_buf()))
 end, { desc = "Delete the current Buffer while maintaining the window layout" })
+
+keymap("n", "gh", "<CMD>ClangdSwitchSourceHeader<CR>")

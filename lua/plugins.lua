@@ -157,11 +157,38 @@ lvim.plugins = {
 		end,
 	},
 
-	-- vim match-up：% 更好的导航和突出显示匹配单词现代 matchit 和 matchparen。支持 vim 和 neovim + tree-sitter。
+	-- FIX: 这个插件有问题，会报 CursorHold 错误
+	-- -- vim match-up：% 更好的导航和突出显示匹配单词现代 matchit 和 matchparen。支持 vim 和 neovim + tree-sitter。
+	-- {
+	-- 	"andymass/vim-matchup",
+	-- 	init = function()
+	-- 		vim.g.matchup_matchparen_offscreen = { method = "popup" }
+	-- 	end,
+	-- },
+
 	{
-		"andymass/vim-matchup",
-		init = function()
-			vim.g.matchup_matchparen_offscreen = { method = "popup" }
+		"theHamsta/nvim-treesitter-pairs",
+		config = function()
+			require("nvim-treesitter.configs").setup({
+				pairs = {
+					enable = true,
+					disable = {},
+					highlight_pair_events = {}, -- e.g. {"CursorMoved"}, -- when to highlight the pairs, use {} to deactivate highlighting
+					highlight_self = false, -- whether to highlight also the part of the pair under cursor (or only the partner)
+					goto_right_end = false, -- whether to go to the end of the right partner or the beginning
+					fallback_cmd_normal = "call matchit#Match_wrapper('',1,'n')", -- What command to issue when we can't find a pair (e.g. "normal! %")
+					keymaps = {
+						goto_partner = "<leader>%",
+						delete_balanced = "X",
+					},
+					delete_balanced = {
+						only_on_first_char = false, -- whether to trigger balanced delete when on first character of a pair
+						fallback_cmd_normal = nil, -- fallback command when no pair found, can be nil
+						longest_partner = false, -- whether to delete the longest or the shortest pair when multiple found.
+						-- E.g. whether to delete the angle bracket or whole tag in  <pair> </pair>
+					},
+				},
+			})
 		end,
 	},
 
@@ -438,49 +465,49 @@ lvim.plugins = {
 		"hrsh7th/cmp-omni",
 	},
 
-	-- -- 语言字典补全
-	-- {
-	--     'skywind3000/vim-dict'
-	-- },
+	-- 语言字典补全
+	{
+		"skywind3000/vim-dict",
+	},
 
-	-- {
-	--     "f3fora/cmp-spell",
-	--     config = function()
-	--         vim.opt.spell = true
-	--         vim.opt.spelllang:append "en_us"
-	--     end,
-	-- },
+	{
+		"f3fora/cmp-spell",
+		config = function()
+			vim.opt.spell = true
+			vim.opt.spelllang:append("en_us")
+		end,
+	},
 
-	-- {
-	--     'andersevenrud/cmp-tmux'
-	-- },
-	-- {
-	--     'petertriho/cmp-git'
-	-- },
+	{
+		"andersevenrud/cmp-tmux",
+	},
+	{
+		"petertriho/cmp-git",
+	},
 
-	-- { 'tzachar/cmp-ai',        dependencies = 'nvim-lua/plenary.nvim' },
-	-- { 'hrsh7th/nvim-cmp',      dependencies = { 'tzachar/cmp-ai' } },
+	{ "tzachar/cmp-ai", dependencies = "nvim-lua/plenary.nvim" },
+	{ "hrsh7th/nvim-cmp", dependencies = { "tzachar/cmp-ai" } },
 
-	-- {
-	--     'tzachar/cmp-fuzzy-path',
-	--     dependencies = { 'tzachar/fuzzy.nvim' },
-	-- },
-	-- {
-	--     'tzachar/cmp-fuzzy-buffer',
-	--     dependencies = { 'tzachar/fuzzy.nvim' },
-	-- },
+	{
+		"tzachar/cmp-fuzzy-path",
+		dependencies = { "tzachar/fuzzy.nvim" },
+	},
+	{
+		"tzachar/cmp-fuzzy-buffer",
+		dependencies = { "tzachar/fuzzy.nvim" },
+	},
 
 	-- 计算器
-	-- {
-	--     'hrsh7th/cmp-calc',
-	--     config = function()
-	--         require 'cmp'.setup {
-	--             sources = {
-	--                 { name = 'calc' },
-	--             },
-	--         }
-	--     end
-	-- },
+	{
+		"hrsh7th/cmp-calc",
+		config = function()
+			require("cmp").setup({
+				sources = {
+					{ name = "calc" },
+				},
+			})
+		end,
+	},
 
 	---------------------------------------------其他---------------------------------------------------------------------------------------------------------
 	-- fzf 搜索
@@ -502,7 +529,7 @@ lvim.plugins = {
 		"nvim-telescope/telescope-project.nvim",
 	},
 
-	-------------------------------------------------------------语言相关---------------------------------------------------------------------------------------
+	-- -------------------------------------------------------------语言相关---------------------------------------------------------------------------------------
 
 	-- jce 高亮
 	{ "edte/jce-highlight" },
@@ -577,5 +604,74 @@ lvim.plugins = {
 		end,
 		ft = { "markdown" },
 	},
-	-- { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+
+	{
+		"edte/copilot",
+	},
+
+	{
+		"edte/copilot-cmp",
+		config = function()
+			require("copilot_cmp").setup()
+		end,
+	},
+
+	{
+		"Wansmer/sibling-swap.nvim",
+		dependencies = "nvim-treesitter/nvim-treesitter",
+
+		config = function()
+			require("sibling-swap").setup({
+				allowed_separators = {
+					",",
+					":",
+					";",
+					"and",
+					"or",
+					"&&",
+					"&",
+					"||",
+					"|",
+					"==",
+					"===",
+					"!=",
+					"!==",
+					"-",
+					"+",
+					["<"] = ">",
+					["<="] = ">=",
+					[">"] = "<",
+					[">="] = "<=",
+				},
+				use_default_keymaps = true,
+				-- Highlight recently swapped node. Can be boolean or table
+				-- If table: { ms = 500, hl_opts = { link = 'IncSearch' } }
+				-- `hl_opts` is a `val` from `nvim_set_hl()`
+				highlight_node_at_cursor = true,
+				-- keybinding for movements to right or left (and up or down, if `allow_interline_swaps` is true)
+				-- (`<C-,>` and `<C-.>` may not map to control chars at system level, so are sent by certain terminals as just `,` and `.`. In this case, just add the mappings you want.)
+				keymaps = {
+					["<a-1>"] = "swap_with_right",
+					["<a-2>"] = "swap_with_left",
+					["<space>."] = "swap_with_right_with_opp",
+					["<space>,"] = "swap_with_left_with_opp",
+				},
+				ignore_injected_langs = false,
+				-- allow swaps across lines
+				allow_interline_swaps = true,
+				-- swaps interline siblings without separators (no recommended, helpful for swaps html-like attributes)
+				interline_swaps_without_separator = false,
+				-- Fallbacs for tiny settings for langs and nodes. See #fallback
+				fallback = {},
+			})
+		end,
+	},
+
+	{
+		"edte/normal-colon.nvim",
+		-- opts = {},
+		config = function()
+			require("normal-colon").setup()
+		end,
+	},
 }

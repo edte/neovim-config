@@ -13,7 +13,7 @@ M.lspConfig = function()
 
 	-- vue
 	lspconfig.volar.setup({
-		filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue", "json" },
+		filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" },
 	})
 	lspconfig.cssls.setup({})
 	lspconfig.tailwindcss.setup({})
